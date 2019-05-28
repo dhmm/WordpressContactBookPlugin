@@ -13,4 +13,7 @@
  define('PLUGIN_PREFIX' , 'dhmm_');
  require('contact_book.php');
 
- 
+
+register_activation_hook(__FILE__ , 'DHMM_ContactBook::installDB');
+
+register_deactivation_hook(__FILE__ , 'DHMM_ContactBook::uninstallDB');

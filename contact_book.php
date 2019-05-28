@@ -1,20 +1,22 @@
 <?php
 if( !class_exists('DHMM_ContactBook')) {
 
-    class DHMM_ContactBook {        
-
-        static function register() {
-            self::installdb();
+    class DHMM_ContactBook { 
+        
+        static function register() {  
+            installDB();            
         }
-        static function unregister() {
-            self::uninstalldb();
+        function unregister() {
+            uninstallDB();
         }
 
-        static function installdb() {
+        function installDB() {
+            require_once( ABSPATH . 'wp-admin/includes/upgrade.php');
+
             global $wpdb;
-            $table_name = $wpdb->prefix."contacts";
-            $charset_collate = $wpdb->get_charset_collate();            
-            $sql = "CREATE TABLE $table_name (
+            $tableName = $wpdb->prefix.'contacts';
+            $charsetCollate = $wpdb->get_charset_collate();            
+            $sql = "CREATE TABLE ".$tableName." (
                 id INT NOT NULL AUTO_INCREMENT,
                 surname VARCHAR(255) NOT NULL,
                 name VARCHAR(255) NOT NULL,
@@ -22,22 +24,37 @@ if( !class_exists('DHMM_ContactBook')) {
                 phone_1 VARCHAR(50) NULL,
                 phone_2 VARCHAR(50) NULL,
                 notes TEXT NULL,
-                PRIMARY KEY (id))
-                $charset_collate ; ";
-        
-            require_once( ABSPATH . 'wp-admin/includes/upgrade.php');
-            
-            dbDelta( $sql );     
-            add_option( 'dhmm_db_version' , '1.0');  
+                PRIMARY KEY (id)
+                ) ". $charsetCollate.";";
+
+   
+            add_option('dhmm_db_version' , '1.0');
+            dbDelta( $sql );                               
         }
-        static function uninstalldb() {
+        function uninstallDB() {
             global $wpdb;
             $table_name = $wpdb->prefix."contacts";
         
             $wpdb->query("DROP TABLE IF EXISTS ".$table_name);
+
+            delete_option('dhmm_db_version');
         }
+/*
+        static function addMenu() {
+            add_menu_page(
+                'DHMM - Contact Book',
+                'Contact Book',
+                'manage_options',
+                plugin_dir_path(__FILE__). 'admin/view.php',
+                null,
+                plugin_dir_url(__FILE__). 'admin/icon.png',
+                2000
+            );
+        }
+        static function removeMenu() {
+            remove_menu_page('dhmm_menu');
+        }    */
     }
 
-    register_activation_hook(__FILE__ , DHMM_ContactBook::register());
-    register_deactivation_hook(__FILE__ , DHMM_ContactBook::unregister());
+   
 }
