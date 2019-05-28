@@ -10,10 +10,9 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
- define('PLUGIN_PREFIX' , 'dhmm_');
  require('contact_book.php');
 
-
-register_activation_hook(__FILE__ , 'DHMM_ContactBook::installDB');
-
-register_deactivation_hook(__FILE__ , 'DHMM_ContactBook::uninstallDB');
+ DHMM_ContactBook::init();
+ register_activation_hook(__FILE__ , 'DHMM_ContactBook::activate');
+ register_deactivation_hook(__FILE__ , 'DHMM_ContactBook::deactivate');
+ 
