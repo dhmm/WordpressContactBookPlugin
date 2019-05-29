@@ -11,7 +11,14 @@
     text-decoration:none;
 }
 
-.dhmmDBredBtn {
+.dhmmCBredBtn {
     background:#a9311e;
+    color:#fff;
+}
+
+.dhmmCBTable thead tr{
+    background:#123456;
+}
+.dhmmCBTable thead tr th{
     color:#fff;
 }

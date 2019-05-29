@@ -5,9 +5,11 @@ if( !class_exists('DHMM_ContactBook')) {
         
         static function init() {            
             add_action('admin_menu' , 'DHMM_ContactBook::addMenu');  
-            wp_register_style('dhmm_cb', plugins_url('admin/css/style.css',__FILE__ ));         
-            wp_register_script( 'dhmm_cb', plugins_url('admin/js/scripts.js',__FILE__ ));  
-            wp_enqueue_scripts('dhmm_cb');       
+            add_action('admin_init' , 'DHMM_ContactBook::addStyles');
+            add_action('admin_init' , 'DHMM_ContactBook::addScripts');
+
+            
+            
         }
 
         static function activate() {  
@@ -52,7 +54,14 @@ if( !class_exists('DHMM_ContactBook')) {
             );
             
         }
-      
+        static function addStyles() {
+            wp_register_style('dhmm_cb', plugins_url('admin/css/style.css',__FILE__ ));
+            wp_enqueue_style('dhmm_cb');
+        }
+        static function addScripts() {
+            wp_register_script( 'dhmm_cb', plugins_url('admin/js/scripts.js',__FILE__ ));
+            wp_enqueue_script('dhmm_cb');
+        }
        
     }
 

@@ -1,6 +1,4 @@
-<?php
-    wp_enqueue_style('dhmm_cb');
-    
+<?php   
     global $wpdb;
     $tableName = $wpdb->prefix.'contacts';
     $result = $wpdb->get_results(
@@ -12,21 +10,21 @@
 </div>
 <div class="wrap">
     <a href="#TB_inline?&width=600&height=550&inlineId=createForm" class="thickbox dhmmCBbtn">Add</a>    
-    <a href="#TB_inline?&width=600&height=550&inlineId=my-content-id" class="thickbox dhmmCBbtn">Remove All</a>
+    <a href="#TB_inline?&width=600&height=550&inlineId=editForm" class="thickbox dhmmCBbtn">Remove All</a>
     <input type="text"/>
     <a href="#TB_inline?&width=600&height=550&inlineId=my-content-id" class="thickbox dhmmCBbtn">Search</a>
 </div>
 
 <div class="wrap">
-    <table class="widefat fixed">
+    <table class="widefat fixed dhmmCBTable">
         <thead >
-            <tr style="background:#123456;">
-                <th style="color:#fff;">Surname</th>
-                <th style="color:#fff;">Name</th>
-                <th style="color:#fff;">Address</th>
-                <th style="color:#fff;">Phone 1</th>
-                <th style="color:#fff;">Phone 2</th>
-                <th style="color:#fff;">Action</th>
+            <tr>
+                <th>Surname</th>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Phone 1</th>
+                <th>Phone 2</th>
+                <th>Action</th>
             </tr>
         </thead>
         <?php if($result) { ?>
@@ -40,7 +38,10 @@
                 <td><?=$contact->address?></td>
                 <td><?=$contact->phone_1?></td>
                 <td><?=$contact->phone_2?></td>    
-                <td><button class="dhmmCBbtn">Edit</button>&nbsp;<button class="dhmmCBbtn dhmmDBredBtn">Delete</button></td>            
+                <td>                    
+                    <a href="#TB_inline?&width=600&height=550&inlineId=editForm" class="thickbox dhmmCBbtn">Edit</a>&nbsp;
+                    <a href="#TB_inline?&width=600&height=550&inlineId=deleteConfirmForm" class="thickbox dhmmCBbtn dhmmCBredBtn">Delete</a>                    
+                </td>            
             </tr>
             <?php $line++; } ?>
         </tbody>
@@ -53,8 +54,13 @@
           Create form
      </p>
 </div>
-<div id="createForm" style="display:none;">
+<div id="editForm" style="display:none;">
      <p>
           Edit form
+     </p>
+</div>
+<div id="deleteConfirmForm" style="display:none;">
+     <p>
+          Delete
      </p>
 </div>
