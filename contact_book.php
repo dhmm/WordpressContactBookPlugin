@@ -4,14 +4,17 @@ if( !class_exists('DHMM_ContactBook')) {
     class DHMM_ContactBook { 
         
         static function init() {            
-            add_action('admin_menu' , 'DHMM_ContactBook::addMenu');   
+            add_action('admin_menu' , 'DHMM_ContactBook::addMenu');  
+            wp_register_style('dhmm_cb', plugins_url('admin/css/style.css',__FILE__ ));         
+            wp_register_script( 'dhmm_cb', plugins_url('admin/js/scripts.js',__FILE__ ));  
+            wp_enqueue_scripts('dhmm_cb');       
         }
 
         static function activate() {  
             self::installDB();                            
         }
         static function deactivate() {
-            self::uninstallDB();
+            self::uninstallDB();            
         }
         static function installDB() {
             require_once( ABSPATH . 'wp-admin/includes/upgrade.php');

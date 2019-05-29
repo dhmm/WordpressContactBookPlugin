@@ -1,0 +1,17 @@
+.dhmmCBbtn {
+    background:#a2d939;
+    border-radius:5px;
+    padding:5px;
+    cursor:pointer;
+    color:#000;
+    border-style: solid;
+    border:0px;
+    padding-left: 20px;
+    padding-right: 20px;
+    text-decoration:none;
+}
+
+.dhmmDBredBtn {
+    background:#a9311e;
+    color:#fff;
+}
