@@ -64,7 +64,7 @@ if( !class_exists('DHMM_ContactBook')) {
                 'DHMM - Contact Book',
                 'Contact Book',
                 'manage_options',
-                DHMMCB_PLUGIN_DIR . 'admin/view.php',
+                DHMMCB_PLUGIN_DIR . 'admin/views/view.php',
                 null,
                 DHMMCB_PLUGIN_URL . 'admin/images/icon.png',
                 2000
@@ -76,25 +76,55 @@ if( !class_exists('DHMM_ContactBook')) {
             wp_enqueue_style('dhmm_cb');
         }
         static function addScripts() {
-           self::addCreateScript();            
+            self::addLoadScript();
+            self::addCreateScript();            
+        }        
+        static function addLoadScript() {
+            add_action("wp_ajax_load_contacts" , "DHMM_ContactBook::loadContacts");
+            $ajaxObject = [
+                'ajaxUrl' => admin_url( 'admin-ajax.php' )              
+            ];
+            wp_enqueue_script('dhmm_cb_load' ,  DHMMCB_PLUGIN_URL.'admin/js/load_contacts.js' , ['jquery'] );            
+            wp_localize_script( 'dhmm_cb_load', 'ajaxObject', $ajaxObject );
         }
-        
         static function addCreateScript() {
             add_action("wp_ajax_create_contact", "DHMM_ContactBook::createContact");
             $ajaxObject = [
                 'ajaxUrl' => admin_url( 'admin-ajax.php' )              
             ];
-            wp_enqueue_script('dhmm_cb' ,  DHMMCB_PLUGIN_URL.'admin/js/create_contact.js' , ['jquery'] );            
-            wp_localize_script( 'dhmm_cb', 'ajaxObject', $ajaxObject );
+            wp_enqueue_script('dhmm_cb_create' ,  DHMMCB_PLUGIN_URL.'admin/js/create_contact.js' , ['jquery'] );            
+            wp_localize_script( 'dhmm_cb_create', 'ajaxObject', $ajaxObject );
         }
+       
 
-        static function okResponse($msg="") {
-            return [ "error" => false , "message" => $msg];
+        static function okResponse($msg="" , $data = null) {
+            return [ "error" => false , "message" => $msg , "data" => $data];
         }
         static function errorResponse($msg) {
-            return [ "error" => true , "message" => $msg];            
+            return [ "error" => true , "message" => $msg , "data" => null];            
         }
-        //AJAX handling function
+        //AJAX handling functions
+        static function loadContacts() {
+            require(DHMMCB_PLUGIN_DIR . 'admin/views/contact_line.php');
+
+            global $wpdb;
+            $tableName = $wpdb->prefix.'contacts';
+            $result = $wpdb->get_results(
+                "SELECT * FROM ".$tableName
+            ); 
+
+            $dataHTML = "";
+            if($result) {
+                $line=1;
+                foreach($result as $contact) { 
+                    $dataHTML .= getContactTrLine($line, $contact);
+                    $line++;
+                  }
+            }
+
+            echo json_encode(self::okResponse("",$dataHTML));
+            wp_die();
+        }
         static function createContact() {
             if(is_user_logged_in()) {                                                
                 if(isset($_POST['contact'])) {  

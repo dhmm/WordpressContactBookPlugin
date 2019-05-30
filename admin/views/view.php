@@ -6,7 +6,7 @@
     );    
 ?>
 <div class="wrap">
-    <h2><img src="<?=DHMMCB_PLUGIN_URL.'admin/images/icon.png'?>"/> Contact Book</h2>
+    <h2 onclick="test()"><img src="<?=DHMMCB_PLUGIN_URL.'admin/images/icon.png'?>"/> Contact Book</h2>
 </div>
 <div class="wrap">
     <a href="#TB_inline?&width=600&height=450&inlineId=createForm" class="thickbox dhmmCBbtn">Add</a>    
@@ -28,7 +28,7 @@
             </tr>
         </thead>
         <?php if($result) { ?>
-        <tbody>
+        <tbody id="tbodyContacts">
             <?php 
             $line=1;
             foreach($result as $contact) { ?>

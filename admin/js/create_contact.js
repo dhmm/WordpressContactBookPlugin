@@ -15,8 +15,8 @@
                     if(response.error == true ) {
                         alert('Error : '+response.message);
                     } else {
-                        alert('Created');
-                        
+                        tb_remove();
+                        loadContacts();                        
                     }
                  }
               );

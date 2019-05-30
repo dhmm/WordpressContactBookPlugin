@@ -1,5 +1,5 @@
 <div id="createForm" style="display:none;" >
-     <form id ="dhmmCBFormCreate" class="dhmmCBForm">
+     <form id ="dhmmCBFormCreate" class="dhmmCBForm" autocomplete="off">
           <p>
                <h2>Create contact</h2>
           </p>
