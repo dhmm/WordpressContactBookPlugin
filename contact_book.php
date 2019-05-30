@@ -76,36 +76,22 @@ if( !class_exists('DHMM_ContactBook')) {
             wp_enqueue_style('dhmm_cb');
         }
         static function addScripts() {
-            self::addLoadScript();
-            self::addCreateScript();   
-            self::addRemoveScript();
-
-        }        
-        static function addLoadScript() {
-            add_action("wp_ajax_load_contacts" , "DHMM_ContactBook::loadContacts");
             $ajaxObject = [
                 'ajaxUrl' => admin_url( 'admin-ajax.php' )              
             ];
+            add_action("wp_ajax_load_contacts" , "DHMM_ContactBook::loadContacts");
             wp_enqueue_script('dhmm_cb_load' ,  DHMMCB_PLUGIN_URL.'admin/js/load_contacts.js' , ['jquery'] );            
             wp_localize_script( 'dhmm_cb_load', 'ajaxObject', $ajaxObject );
-        }
-        static function addCreateScript() {
+
             add_action("wp_ajax_create_contact", "DHMM_ContactBook::createContact");
-            $ajaxObject = [
-                'ajaxUrl' => admin_url( 'admin-ajax.php' )              
-            ];
             wp_enqueue_script('dhmm_cb_create' ,  DHMMCB_PLUGIN_URL.'admin/js/create_contact.js' , ['jquery'] );            
             wp_localize_script( 'dhmm_cb_create', 'ajaxObject', $ajaxObject );
-        }
-        static function addRemoveScript() {
-            add_action("wp_ajax_remove_contact", "DHMM_ContactBook::removeContact");
-            $ajaxObject = [
-                'ajaxUrl' => admin_url( 'admin-ajax.php' )              
-            ];
+
+            add_action("wp_ajax_remove_contact", "DHMM_ContactBook::removeContact");            
             wp_enqueue_script('dhmm_cb_remove' ,  DHMMCB_PLUGIN_URL.'admin/js/remove_contact.js' , ['jquery'] );            
             wp_localize_script( 'dhmm_cb_remove', 'ajaxObject', $ajaxObject );
-        }
-       
+
+        }                      
 
         static function okResponse($msg="" , $data = null) {
             return [ "error" => false , "message" => $msg , "data" => $data];
