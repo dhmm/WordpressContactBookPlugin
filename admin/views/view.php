@@ -11,8 +11,8 @@
 <div class="wrap">
     <a href="#TB_inline?&width=600&height=450&inlineId=createForm" class="thickbox dhmmCBbtn">Add</a>    
     <a onClick="removeAllContacts()" href="#" class="dhmmCBbtn">Remove All</a>
-    <input type="text"/>
-    <a href="#TB_inline?&width=600&height=550&inlineId=my-content-id" class="thickbox dhmmCBbtn">Search</a>
+    <input id ="searchBox" onKeyUp ="searchContacts()" type="text"/>
+    <a onClick ="clearSearch()" href="#" class="dhmmCBbtn dhmmCBredBtn">X</a> 
 </div>
 
 <div class="wrap">

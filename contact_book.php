@@ -99,6 +99,14 @@ if( !class_exists('DHMM_ContactBook')) {
             wp_enqueue_script('dhmm_cb_remove_all' ,  DHMMCB_PLUGIN_URL.'admin/js/remove_all_contacts.js' , ['jquery'] );            
             wp_localize_script( 'dhmm_cb_remove_all', 'ajaxObject', $ajaxObject );
 
+            //Search in Contacts
+            add_action("wp_ajax_search_contacts", "DHMM_ContactBook::searchContacts");            
+            wp_enqueue_script('dhmm_cb_search' ,  DHMMCB_PLUGIN_URL.'admin/js/search_contacts.js' , ['jquery'] );            
+            wp_localize_script( 'dhmm_cb_search', 'ajaxObject', $ajaxObject );
+
+            //Clear search                       
+            wp_enqueue_script('dhmm_cb_clear_search' ,  DHMMCB_PLUGIN_URL.'admin/js/clear_search.js' , ['jquery'] );                        
+
         }                      
 
         //AJAX Responses
@@ -200,6 +208,41 @@ if( !class_exists('DHMM_ContactBook')) {
               }
             wp_die();
         }
+        static function searchContacts() {            
+            $keyword = null;
+            $where = "";
+            if(isset($_POST['keyword']) && !empty($_POST['keyword'])) {
+                $keyword = $_POST['keyword'];
+                $where = " WHERE 
+                    surname like '%".$keyword."%' OR
+                    name    like '%".$keyword."%' OR
+                    address like '%".$keyword."%' OR
+                    phone_1 like '%".$keyword."%' OR
+                    phone_2 like '%".$keyword."%' OR
+                    notes like  '%".$keyword."%'                                      
+                ";
+            }
+
+            require(DHMMCB_PLUGIN_DIR . 'admin/views/contact_line.php');            
+            global $wpdb;
+            $tableName = $wpdb->prefix.'contacts';
+            $result = $wpdb->get_results(
+                "SELECT * FROM ".$tableName . $where
+            ); 
+
+            $dataHTML = "";
+            if($result) {
+                $line=1;
+                foreach($result as $contact) { 
+                    $dataHTML .= getContactTrLine($line, $contact);
+                    $line++;
+                }
+            }
+            echo json_encode(self::okResponse("",$dataHTML));
+            
+            wp_die();
+        
+        }         
     }
 
    
