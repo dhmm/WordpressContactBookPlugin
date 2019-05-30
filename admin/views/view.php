@@ -39,7 +39,7 @@
                 <td><?=$contact->phone_1?></td>
                 <td><?=$contact->phone_2?></td>    
                 <td>                    
-                    <a href="#TB_inline?&width=600&height=550&inlineId=editForm" class="thickbox dhmmCBbtn">Edit</a>&nbsp;
+                    <a onClick="editContact(<?=$contact->id?>)" href="#TB_inline?&width=600&height=550&inlineId=editForm" class="thickbox dhmmCBbtn">Edit</a>&nbsp;
                     <a onClick="removeContact(<?=$contact->id?>)" href="#" class="dhmmCBbtn dhmmCBredBtn">Delete</a>                    
                 </td>            
             </tr>

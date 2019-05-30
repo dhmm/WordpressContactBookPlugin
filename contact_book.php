@@ -88,6 +88,16 @@ if( !class_exists('DHMM_ContactBook')) {
             add_action("wp_ajax_create_contact", "DHMM_ContactBook::createContact");
             wp_enqueue_script('dhmm_cb_create' ,  DHMMCB_PLUGIN_URL.'admin/js/create_contact.js' , ['jquery'] );            
             wp_localize_script( 'dhmm_cb_create', 'ajaxObject', $ajaxObject );
+
+            //LoadContact
+            add_action("wp_ajax_load_contact" , "DHMM_ContactBook::loadContact");
+            wp_enqueue_script('dhmm_cb_load_contact' ,  DHMMCB_PLUGIN_URL.'admin/js/load_contact.js' , ['jquery'] );            
+            wp_localize_script( 'dhmm_cb_load_contact', 'ajaxObject', $ajaxObject );
+
+            //Edit Contact
+            add_action("wp_ajax_edit_contact", "DHMM_ContactBook::editContact");
+            wp_enqueue_script('dhmm_cb_edit' ,  DHMMCB_PLUGIN_URL.'admin/js/edit_contact.js' , ['jquery'] );            
+            wp_localize_script( 'dhmm_cb_edit', 'ajaxObject', $ajaxObject );
             
             //Delete Contact
             add_action("wp_ajax_remove_contact", "DHMM_ContactBook::removeContact");            
@@ -118,24 +128,26 @@ if( !class_exists('DHMM_ContactBook')) {
         }
         //AJAX handling functions
         static function loadContacts() {
-            require(DHMMCB_PLUGIN_DIR . 'admin/views/contact_line.php');
+            if(is_user_logged_in()) {  
+                require(DHMMCB_PLUGIN_DIR . 'admin/views/contact_line.php');
 
-            global $wpdb;
-            $tableName = $wpdb->prefix.'contacts';
-            $result = $wpdb->get_results(
-                "SELECT * FROM ".$tableName
-            ); 
+                global $wpdb;
+                $tableName = $wpdb->prefix.'contacts';
+                $result = $wpdb->get_results(
+                    "SELECT * FROM ".$tableName
+                ); 
 
-            $dataHTML = "";
-            if($result) {
-                $line=1;
-                foreach($result as $contact) { 
-                    $dataHTML .= getContactTrLine($line, $contact);
-                    $line++;
-                  }
+                $dataHTML = "";
+                if($result) {
+                    $line=1;
+                    foreach($result as $contact) { 
+                        $dataHTML .= getContactTrLine($line, $contact);
+                        $line++;
+                    }
+                }
+
+                echo json_encode(self::okResponse("",$dataHTML));
             }
-
-            echo json_encode(self::okResponse("",$dataHTML));
             wp_die();
         }
         static function createContact() {
@@ -161,6 +173,68 @@ if( !class_exists('DHMM_ContactBook')) {
                             ";                          
                         $wpdb->query( $sql );  
                         $response =  self::okResponse();                       
+                    } else {
+                        $response = self::errorResponse("Fill surname , name , address");
+                    }
+                } else {
+                    $response = self::errorResponse("No form data");         
+                }                
+                echo json_encode($response);
+               
+
+            }
+            wp_die();
+        }
+        static function loadContact() {
+            if(is_user_logged_in()) {                                                
+                if(isset($_POST['id'])) {  
+                    $id = $_POST['id'];                                 
+                    $response = null;
+                    
+                    global $wpdb;                                            
+                    $tableName = $wpdb->prefix.'contacts';     
+                    $sql = "
+                        SELECT * FROM  ".$tableName." WHERE id = '".$id."'";
+
+                    $result = $wpdb->get_row( $sql );  
+                    $response =  self::okResponse("" , $result);                                    
+                } else {
+                    $response = self::errorResponse("No form data");         
+                }                
+                echo json_encode($response);               
+            }
+            wp_die();
+        }
+        static function editContact() {
+            if(is_user_logged_in()) {                                                
+                if(isset($_POST['id']) && isset($_POST['contact'])) {  
+                    $id = $_POST['id'];
+                    $data = "";                                                        
+                    parse_str($_POST['contact'] , $data);
+                    
+                    if(
+                        isset($data['surname']) && !empty($data['surname'])  &&
+                        isset($data['name']) && !empty($data['name'])  &&
+                        isset($data['address']) && !empty($data['address'])  
+                    ) {
+                        $response = null;
+                        
+                        global $wpdb;                                            
+                        $tableName = $wpdb->prefix.'contacts';     
+                        $sql = "
+                            UPDATE ".$tableName." 
+                            SET 
+                            surname = '".$data['surname']."' , 
+                            name    = '".$data['name']."' ,
+                            address = '".$data['address']."' , 
+                            phone_1 = '".$data['phone1']."' ,
+                            phone_2 = '".$data['phone2']."' ,
+                            notes = '".$data['notes']."' 
+
+                            WHERE id = '".$id."'";
+
+                        $wpdb->query( $sql );  
+                        $response =  self::okResponse("");                       
                     } else {
                         $response = self::errorResponse("Fill surname , name , address");
                     }
