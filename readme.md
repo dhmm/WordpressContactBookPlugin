@@ -2,7 +2,7 @@
 
 Wordpress Plugin - Simple Contact book 
 
-![alt text](http://)
+![alt text](https://raw.githubusercontent.com/dhmm/WordpressContactBookPlugin/work/preview.png)
 
 ### What you need ?
 
