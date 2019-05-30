@@ -79,17 +79,25 @@ if( !class_exists('DHMM_ContactBook')) {
             $ajaxObject = [
                 'ajaxUrl' => admin_url( 'admin-ajax.php' )              
             ];
+            //Load Contacts
             add_action("wp_ajax_load_contacts" , "DHMM_ContactBook::loadContacts");
             wp_enqueue_script('dhmm_cb_load' ,  DHMMCB_PLUGIN_URL.'admin/js/load_contacts.js' , ['jquery'] );            
             wp_localize_script( 'dhmm_cb_load', 'ajaxObject', $ajaxObject );
-
+            
+            //Create Contact
             add_action("wp_ajax_create_contact", "DHMM_ContactBook::createContact");
             wp_enqueue_script('dhmm_cb_create' ,  DHMMCB_PLUGIN_URL.'admin/js/create_contact.js' , ['jquery'] );            
             wp_localize_script( 'dhmm_cb_create', 'ajaxObject', $ajaxObject );
-
+            
+            //Delete Contact
             add_action("wp_ajax_remove_contact", "DHMM_ContactBook::removeContact");            
             wp_enqueue_script('dhmm_cb_remove' ,  DHMMCB_PLUGIN_URL.'admin/js/remove_contact.js' , ['jquery'] );            
             wp_localize_script( 'dhmm_cb_remove', 'ajaxObject', $ajaxObject );
+            
+            //Delete ALL Contacts
+            add_action("wp_ajax_remove_all_contacts", "DHMM_ContactBook::removeAllContacts");            
+            wp_enqueue_script('dhmm_cb_remove_all' ,  DHMMCB_PLUGIN_URL.'admin/js/remove_all_contacts.js' , ['jquery'] );            
+            wp_localize_script( 'dhmm_cb_remove_all', 'ajaxObject', $ajaxObject );
 
         }                      
 
@@ -174,6 +182,20 @@ if( !class_exists('DHMM_ContactBook')) {
                 } else {
                     $response = self::errorResponse("No contact detected");         
                 }                
+                echo json_encode($response);
+              }
+            wp_die();
+        }
+        static function removeAllContacts() {
+            if(is_user_logged_in()) {                                                                                             
+                $response = null;                    
+                global $wpdb;                                            
+                $tableName = $wpdb->prefix.'contacts';     
+                $sql = "
+                    TRUNCATE TABLE ".$tableName." ";                          
+                $wpdb->query( $sql );  
+                $response =  self::okResponse();                       
+                                       
                 echo json_encode($response);
               }
             wp_die();

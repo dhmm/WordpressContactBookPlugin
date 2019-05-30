@@ -10,7 +10,7 @@
 </div>
 <div class="wrap">
     <a href="#TB_inline?&width=600&height=450&inlineId=createForm" class="thickbox dhmmCBbtn">Add</a>    
-    <a href="#TB_inline?&width=600&height=550&inlineId=editForm" class="thickbox dhmmCBbtn">Remove All</a>
+    <a onClick="removeAllContacts()" href="#" class="dhmmCBbtn">Remove All</a>
     <input type="text"/>
     <a href="#TB_inline?&width=600&height=550&inlineId=my-content-id" class="thickbox dhmmCBbtn">Search</a>
 </div>
