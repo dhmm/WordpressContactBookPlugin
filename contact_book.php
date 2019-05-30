@@ -93,6 +93,7 @@ if( !class_exists('DHMM_ContactBook')) {
 
         }                      
 
+        //AJAX Responses
         static function okResponse($msg="" , $data = null) {
             return [ "error" => false , "message" => $msg , "data" => $data];
         }
