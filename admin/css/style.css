@@ -22,3 +22,21 @@
 .dhmmCBTable thead tr th{
     color:#fff;
 }
+.dhmmCBForm {
+    
+    padding:10px;
+}
+.dhmmCBForm p {
+    width:100%;
+}
+.dhmmCBForm label {
+    display:block;
+    float:left;
+    width:70px;
+}
+.dhmmCBForm p {
+    margin: 5px;
+}
+.dhmmCBForm p input,textarea {
+    width:250px;
+}

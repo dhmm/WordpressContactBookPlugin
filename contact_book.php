@@ -1,4 +1,21 @@
 <?php
+/**
+ * Plugin Name: CB Plugin
+ * Plugin URI:  http://github.com/dhmm/wp-cb-plugin
+ * Description: Simple contact book plugin for wordpress
+ * Version:     1.0
+ * Author:      dhmm
+ * Author URI:  https://github.com/dhmm
+ * License:     GPL2
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ */
+
+ define( 'DHMMCB_PLUGIN_DIR', dirname(__FILE__).'/' );  
+ define( 'DHMMCB_PLUGIN_URL', plugin_dir_url(__FILE__));  
+ 
+
+
+
 if( !class_exists('DHMM_ContactBook')) {
 
     class DHMM_ContactBook { 
@@ -7,7 +24,7 @@ if( !class_exists('DHMM_ContactBook')) {
             add_action('admin_menu' , 'DHMM_ContactBook::addMenu');  
             add_action('admin_init' , 'DHMM_ContactBook::addStyles');
             add_action('admin_init' , 'DHMM_ContactBook::addScripts');
-
+            add_action('dhmmcb_ajax_create_contact' , '');
             
             
         }
@@ -47,24 +64,79 @@ if( !class_exists('DHMM_ContactBook')) {
                 'DHMM - Contact Book',
                 'Contact Book',
                 'manage_options',
-                plugin_dir_path(__FILE__) . 'admin/view.php',
+                DHMMCB_PLUGIN_DIR . 'admin/view.php',
                 null,
-                plugin_dir_url(__FILE__) . 'admin/icon.png',
+                DHMMCB_PLUGIN_URL . 'admin/images/icon.png',
                 2000
             );
             
         }
         static function addStyles() {
-            wp_register_style('dhmm_cb', plugins_url('admin/css/style.css',__FILE__ ));
+            wp_register_style('dhmm_cb', DHMMCB_PLUGIN_URL.'admin/css/style.css');
             wp_enqueue_style('dhmm_cb');
         }
         static function addScripts() {
-            wp_register_script( 'dhmm_cb', plugins_url('admin/js/scripts.js',__FILE__ ));
-            wp_enqueue_script('dhmm_cb');
+           self::addCreateScript();            
+        }
+        
+        static function addCreateScript() {
+            add_action("wp_ajax_create_contact", "DHMM_ContactBook::createContact");
+            $ajaxObject = [
+                'ajaxUrl' => admin_url( 'admin-ajax.php' )              
+            ];
+            wp_enqueue_script('dhmm_cb' ,  DHMMCB_PLUGIN_URL.'admin/js/create_contact.js' , ['jquery'] );            
+            wp_localize_script( 'dhmm_cb', 'ajaxObject', $ajaxObject );
+        }
+
+        static function okResponse($msg="") {
+            return [ "error" => false , "message" => $msg];
+        }
+        static function errorResponse($msg) {
+            return [ "error" => true , "message" => $msg];            
+        }
+        //AJAX handling function
+        static function createContact() {
+            if(is_user_logged_in()) {                                                
+                if(isset($_POST['contact'])) {  
+                    $data = "";                                                        
+                    parse_str($_POST['contact'] , $data);
+          
+                    if(
+                        isset($data['surname']) && !empty($data['surname'])  &&
+                        isset($data['name']) && !empty($data['name'])  &&
+                        isset($data['address']) && !empty($data['address'])  
+                    ) {
+                        $response = null;
+                        
+                        global $wpdb;                                            
+                        $tableName = $wpdb->prefix.'contacts';     
+                        $sql = "
+                            INSERT INTO ".$tableName." 
+                            ( surname , name , address , phone_1 , phone_2 , notes )
+                            VALUES 
+                            ( '".$data['surname']."' , '".$data['name']."' , '".$data['address']."' , '".$data['phone1']."' , '".$data['phone2']."' , '".$data['notes']."' )
+                            ";                          
+                        $wpdb->query( $sql );  
+                        $response =  self::okResponse();                       
+                    } else {
+                        $response = self::errorResponse("Fill surname , name , address");
+                    }
+                } else {
+                    $response = self::errorResponse("No form data");         
+                }                
+                echo json_encode($response);
+               
+
+            }
+            wp_die();
         }
        
     }
 
    
 }
+
+ DHMM_ContactBook::init();
+ register_activation_hook(__FILE__ , 'DHMM_ContactBook::activate');
+ register_deactivation_hook(__FILE__ , 'DHMM_ContactBook::deactivate');
 

@@ -6,10 +6,10 @@
     );    
 ?>
 <div class="wrap">
-    <h2><img src="<?=plugin_dir_url(__FILE__) . '/icon.png'?>"/> Contact Book</h2>
+    <h2><img src="<?=DHMMCB_PLUGIN_URL.'admin/images/icon.png'?>"/> Contact Book</h2>
 </div>
 <div class="wrap">
-    <a href="#TB_inline?&width=600&height=550&inlineId=createForm" class="thickbox dhmmCBbtn">Add</a>    
+    <a href="#TB_inline?&width=600&height=450&inlineId=createForm" class="thickbox dhmmCBbtn">Add</a>    
     <a href="#TB_inline?&width=600&height=550&inlineId=editForm" class="thickbox dhmmCBbtn">Remove All</a>
     <input type="text"/>
     <a href="#TB_inline?&width=600&height=550&inlineId=my-content-id" class="thickbox dhmmCBbtn">Search</a>
@@ -48,19 +48,11 @@
         <?php } ?>
     </table>    
 </div>
-<?php add_thickbox(); ?>
-<div id="createForm" style="display:none;">
-     <p>
-          Create form
-     </p>
-</div>
-<div id="editForm" style="display:none;">
-     <p>
-          Edit form
-     </p>
-</div>
-<div id="deleteConfirmForm" style="display:none;">
-     <p>
-          Delete
-     </p>
-</div>
+<?php 
+add_thickbox(); 
+include DHMMCB_PLUGIN_DIR.'/admin/includes/create_form.php';
+include DHMMCB_PLUGIN_DIR.'/admin/includes/edit_form.php';
+include DHMMCB_PLUGIN_DIR.'/admin/includes/delete_confirm_dialog.php';                                           
+?>
+
+
