@@ -77,7 +77,9 @@ if( !class_exists('DHMM_ContactBook')) {
         }
         static function addScripts() {
             self::addLoadScript();
-            self::addCreateScript();            
+            self::addCreateScript();   
+            self::addRemoveScript();
+
         }        
         static function addLoadScript() {
             add_action("wp_ajax_load_contacts" , "DHMM_ContactBook::loadContacts");
@@ -94,6 +96,14 @@ if( !class_exists('DHMM_ContactBook')) {
             ];
             wp_enqueue_script('dhmm_cb_create' ,  DHMMCB_PLUGIN_URL.'admin/js/create_contact.js' , ['jquery'] );            
             wp_localize_script( 'dhmm_cb_create', 'ajaxObject', $ajaxObject );
+        }
+        static function addRemoveScript() {
+            add_action("wp_ajax_remove_contact", "DHMM_ContactBook::removeContact");
+            $ajaxObject = [
+                'ajaxUrl' => admin_url( 'admin-ajax.php' )              
+            ];
+            wp_enqueue_script('dhmm_cb_remove' ,  DHMMCB_PLUGIN_URL.'admin/js/remove_contact.js' , ['jquery'] );            
+            wp_localize_script( 'dhmm_cb_remove', 'ajaxObject', $ajaxObject );
         }
        
 
@@ -160,7 +170,27 @@ if( !class_exists('DHMM_ContactBook')) {
             }
             wp_die();
         }
-       
+        static function removeContact() {
+            if(is_user_logged_in()) {                                                
+                if(isset($_POST['id'])) {                      
+                    $id = $_POST['id'];    
+                    $response = null;                    
+                    global $wpdb;                                            
+                    $tableName = $wpdb->prefix.'contacts';     
+                    $sql = "
+                        DELETE FROM ".$tableName." 
+                        WHERE id = '$id'
+                        ";                          
+                    $wpdb->query( $sql );  
+                    $response =  self::okResponse();                       
+                
+                } else {
+                    $response = self::errorResponse("No contact detected");         
+                }                
+                echo json_encode($response);
+              }
+            wp_die();
+        }
     }
 
    

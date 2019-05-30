@@ -40,7 +40,7 @@
                 <td><?=$contact->phone_2?></td>    
                 <td>                    
                     <a href="#TB_inline?&width=600&height=550&inlineId=editForm" class="thickbox dhmmCBbtn">Edit</a>&nbsp;
-                    <a href="#TB_inline?&width=600&height=550&inlineId=deleteConfirmForm" class="thickbox dhmmCBbtn dhmmCBredBtn">Delete</a>                    
+                    <a onClick="removeContact(<?=$contact->id?>)" href="#" class="dhmmCBbtn dhmmCBredBtn">Delete</a>                    
                 </td>            
             </tr>
             <?php $line++; } ?>
@@ -51,8 +51,7 @@
 <?php 
 add_thickbox(); 
 include DHMMCB_PLUGIN_DIR.'/admin/includes/create_form.php';
-include DHMMCB_PLUGIN_DIR.'/admin/includes/edit_form.php';
-include DHMMCB_PLUGIN_DIR.'/admin/includes/delete_confirm_dialog.php';                                           
+include DHMMCB_PLUGIN_DIR.'/admin/includes/edit_form.php';                                       
 ?>
 
 
